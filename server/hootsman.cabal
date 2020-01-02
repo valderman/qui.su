@@ -1,0 +1,84 @@
+cabal-version: 1.12
+
+name:           hootsman
+version:        0.1.0.0
+description:    Application for creating, managing and giving quizzes.
+-- homepage:       https://github.com/valderman/hootsman#readme
+-- bug-reports:    https://github.com/valderman/hootsman/issues
+author:         Anton Ekblad
+maintainer:     anton@ekblad.cc
+copyright:      2019 Anton Ekblad
+license:        AGPL-3
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/valderman/hootsman
+
+library
+  exposed-modules:
+      AppMonad
+      Backend.Init
+      Backend.Quiz
+      Backend.Tables
+      Backend.User
+      DB
+      DB.Alternative
+      DB.Common
+      DB.Quiz
+      DB.Question
+      DB.User
+      Endpoints.Common
+      Endpoints.Respondent
+      Endpoints.Questioner
+      Endpoints.User
+      Environment
+      EventManager
+      Hootsman
+      Jobs.UpdateGoogleKeys
+      Model.Quiz
+      Notifier
+      QuizParser
+      Scheduler
+      Token.Google
+      Token.Hootsman
+      Token.Issue
+      Token.Types
+      Token.Verify
+  other-modules:
+      Paths_hootsman
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson           >=1.4  && <1.5,
+      base            >=4.7  && <5,
+      bytestring      >=0.10 && <0.11,
+      cmark           >=0.6  && <0.7,
+      containers      >=0.6  && <0.7,
+      http-client     >=0.6  && <0.7,
+      http-client-tls >=0.3  && <0.4,
+      http-media      >=0.8  && <0.9,
+      http-types      >=0.12 && <0.13,
+      jose-jwt        >=0.8  && <0.9,
+      mtl             >=2.2  && <2.3,
+      random          >=1.1  && <1.2,
+      selda           >=0.5  && <0.6,
+      selda-sqlite,
+      servant         >=0.16 && <0.17,
+      servant-server  >=0.16 && <0.17,
+      warp            >=3.2  && <3.3,
+      text            >=1.2  && <1.4,
+      time            >=1.8  && <1.10
+  default-language: Haskell2010
+
+executable hootsman-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hootsman
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , hootsman
+  default-language: Haskell2010
