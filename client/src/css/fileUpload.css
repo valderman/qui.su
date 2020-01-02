@@ -1,0 +1,28 @@
+.fileUpload {
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+
+.fileUpload input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.fileUpload .pick {
+    font-size: 0.75em;
+    text-decoration: underline;
+}
+
+.fileUpload label {
+    border: 1px dashed maroon;
+    border-radius: 1em;
+    font-size: 16pt;
+    cursor: pointer;
+    display: block;
+    padding: 1em;
+}

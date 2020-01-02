@@ -1,0 +1,10 @@
+.pieChart {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.pieChartContainer h2 {
+    margin-bottom: 1em;
+    font-weight: normal;
+    font-size: 2em;
+}

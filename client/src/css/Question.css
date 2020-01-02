@@ -1,0 +1,21 @@
+.question.overhead, .question.preview {
+    padding-bottom: 0 !important;
+}
+
+.question div {
+    padding: 1em;
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 24pt;
+}
+
+.question div.overhead, .question .overhead div {
+    font-size: 24pt;
+}
+
+.question div.preview, .question .preview div {
+    font-size: 14pt;
+    padding: 0;
+    margin: 0.5em;
+    margin-bottom: 0;
+}

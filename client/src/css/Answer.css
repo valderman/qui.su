@@ -1,0 +1,32 @@
+.answer {
+    display: grid;
+    padding: 1em;
+}
+
+@media (min-width: 600px) {
+    .answer {
+        grid-template-columns: 50% auto;
+    }
+}
+
+.answer button {
+    padding: 1em;
+    margin: 1em;
+}
+
+.answer button p {
+    padding: 0;
+    margin: 0;
+    font-size: 1.25em;
+}
+
+.answer img {
+    max-width: 90%;
+}
+
+.answer .preview p, .answer p.preview {
+    font-size: 12pt;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.5em;
+}

@@ -1,0 +1,6 @@
+.*
+*.hi
+*.o
+/_*
+client/node_modules
+client/build
