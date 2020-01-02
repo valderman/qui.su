@@ -4,3 +4,5 @@
 /_*
 client/node_modules
 client/build
+*.sqlite
+googlekeys.json
