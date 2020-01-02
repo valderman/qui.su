@@ -10,17 +10,9 @@ function MarkdownTutorial(props) {
     return (
         <div id="markdownTutorial">
             <h3>How do I make a quiz?</h3>
-            <p>
-                Quizzes are written in CommonMark flavour&nbsp;
-                <a href="https://commonmark.org/help/tutorial/">Markdown</a>
-                &nbsp;without inline HTML, with one quiz per file.
-                Each file must begin with a heading,
-                which is used as the <em>name</em> of the quiz.
-                The quiz name may be followed by a description of the quiz,
-                which may contain anything <em>except</em> another heading.
-                This description is currently ignored, but may be used for
-                documentation in the future.
-            </p>
+            Write a quiz file and upload it using the file drop area to the left.
+            As for how you make a quiz file, learning by example is probably
+            the easiest way to get started.
             <h4>An example quiz</h4>
             <pre><code className="language-markdown">{`My exciting quiz
 ================
@@ -42,6 +34,17 @@ Can you use raw HTML in quizzes?
 2. No (correct)`}</code></pre>
             <h4>What did I just read?</h4>
             <p>
+                Quizzes are written in CommonMark flavour&nbsp;
+                <a href="https://commonmark.org/help/tutorial/">Markdown</a>
+                &nbsp;without inline HTML, with one quiz per file.
+                Each file must begin with a heading,
+                which is used as the <em>name</em> of the quiz.
+                The quiz name may be followed by a description of the quiz,
+                which may contain anything <em>except</em> another heading.
+                This description is currently ignored, but may be used for
+                documentation in the future.
+            </p>
+            <p>
                 After the title and description follows a sequence of questions.
                 Each question consists of (in order):
             </p>
@@ -56,8 +59,8 @@ Can you use raw HTML in quizzes?
                 <li>
                     <p>
                         The <em>body</em> of the question.
-                        The question body may contain anything <em>except</em>
-                        numbered or bulleted lists.
+                        The question body may contain
+                        anything <em>except</em> numbered or bulleted lists.
                     </p>
                 </li>
                 <li>
@@ -71,8 +74,8 @@ Can you use raw HTML in quizzes?
                         A question may have any number of correct answers.
                         An answer may be marked as <em>correct</em> by
                         surrounding it with [brackets], &#123;braces&#125;,
-                        (parentheses) or &lt;angle brackets&gt;, by adding
-                        &nbsp; <em>(correct)</em> as a prefix or suffix,
+                        (parentheses) or &lt;angle brackets&gt;, by
+                        adding <em>(correct)</em> as a prefix or suffix,
                         or by adding an arrow (-&gt; or &lt;-) pointing to it.
                     </p>
                 </li>
