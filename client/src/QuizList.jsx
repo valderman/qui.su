@@ -1,88 +1,84 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import Uploader from './Uploader.jsx';
 import List from './List.jsx';
 import "./css/QuizList.css";
 
-class QuizList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.api = props.api;
-        this.onSelect = (props.onSelect || (() => undefined)).bind(null);
-        this.state = { quizzes: [], selected: null, goto: null };
-        this.buttons = [
-            {
-                title: 'Start or resume quiz',
-                className: 'fa-play-circle',
-                onClick: q => this.setState({goto: '/present/' + q.key})
-            },
-            {
-                title: 'Open overhead view (new window)',
-                className: 'fa-chalkboard-teacher',
-                onClick: q => window.open('/overhead/' + q.key)
-            },
-            {
-                title: 'Erase all quiz answers',
-                className: 'fa-eraser',
-                onClick: this.resetAnswers.bind(this)
-            },
-            {
-                title: 'Delete quiz',
-                className: 'fa-trash-alt',
-                onClick: this.deleteQuiz.bind(this)
-            },
-        ];
-    }
+function QuizList(props) {
+    const [quizzes, setQuizzes] = useState([]);
+    const [selected, select] = useState(null);
+    const [goto, setGoto] = useState(null);
 
-    async componentDidMount() {
-        await this.fetchQuizzes();
-    }
+    const onSelect = e => {
+        select(e);
+        (props.onSelect || (() => undefined))(e);
+    };
 
-    async fetchQuizzes() {
-        const quizzes = await this.api.getQuizzes();
-        this.setState({ quizzes: quizzes.map(q => ({...q, key: q.quizId})) });
-    }
+    const fetchQuizzes = async () => {
+        const qs = await props.api.getQuizzes();
+        setQuizzes(qs.map(q => ({...q, key: q.quizId})));
+    };
+    useEffect(() => {
+        fetchQuizzes();
+    }, [props.tick]);
 
-    async onUpload(q) {
-        await this.fetchQuizzes();
-    }
-
-    async resetAnswers(quiz) {
+    const resetAnswers = async (quiz) => {
         const msg = "Reset answers for " + quiz.name + "? This cannot be undone.";
         if(window.confirm(msg)) {
-            await this.api.resetAnswers(quiz.key);
+            await props.api.resetAnswers(quiz.key);
         }
-    }
+    };
 
-    async deleteQuiz(q) {
+    const deleteQuiz = async (q) => {
         const msg = "Really delete " + q.name + "? This cannot be undone.";
         if(window.confirm(msg)) {
-            if(this.state.selected && this.state.selected.key === q.key) {
-                this.select(null);
+            if(selected && selected.key === q.key) {
+                onSelect(null);
             }
-            await this.api.deleteQuiz(q.key);
-            await this.fetchQuizzes();
+            await props.api.deleteQuiz(q.key);
+            await fetchQuizzes();
         }
-    }
+    };
 
-    render() {
-        if(this.state.goto) {
-            return (<Redirect to={this.state.goto} />)
-        }
-        return (
-            <div className="quizList">
-                <List
-                    onSelect={q => this.onSelect(q)}
-                    buttons={this.buttons}
-                    items={this.state.quizzes}
-                />
-                <Uploader
-                    api={this.props.api}
-                    onUpload={q => this.onUpload(q)}
-                />
-            </div>
-        );
+    const buttons = [
+        {
+            title: 'Start or resume quiz',
+            className: 'fa-play-circle',
+            onClick: q => setGoto('/present/' + q.key)
+        },
+        {
+            title: 'Open overhead view (new window)',
+            className: 'fa-chalkboard-teacher',
+            onClick: q => window.open('/overhead/' + q.key)
+        },
+        {
+            title: 'Erase all quiz answers',
+            className: 'fa-eraser',
+            onClick: resetAnswers
+        },
+        {
+            title: 'Delete quiz',
+            className: 'fa-trash-alt',
+            onClick: deleteQuiz
+        },
+    ];
+
+    if(goto) {
+        return (<Redirect to={goto} />)
     }
+    return (
+        <div className="quizList">
+            <List
+                onSelect={onSelect}
+                buttons={buttons}
+                items={quizzes}
+            />
+            <Uploader
+                api={props.api}
+                onUpload={fetchQuizzes}
+            />
+        </div>
+    );
 }
 
 export default QuizList;

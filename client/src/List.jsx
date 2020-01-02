@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import "./css/List.css";
 
 function List(props) {
-    const onSelect = (props.onSelect || (() => undefined)).bind(null);
+    const onSelect = (props.onSelect || (() => undefined));
     const [selected, setSelected] = useState(null);
 
     const toggleSelect = (e, item) => {

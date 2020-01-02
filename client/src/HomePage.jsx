@@ -6,6 +6,7 @@ import './css/HomePage.css';
 
 function HomePage(props) {
     const [selectedQuiz, selectQuiz] = useState(undefined);
+    const [tick, setTick] = useState(0);
     return (
         <main className="homePage">
             <h1>Congratulations, you're logged in!</h1>
@@ -22,9 +23,15 @@ function HomePage(props) {
                     <QuizList
                         api={props.api}
                         onSelect={selectQuiz}
+                        tick={tick}
                     />
                 </div>
-                {!selectedQuiz && <MarkdownTutorial />}
+                {!selectedQuiz &&
+                    <MarkdownTutorial
+                        api={props.api}
+                        onAddQuiz={() => setTick(tick+1)}
+                    />
+                }
                 {selectedQuiz &&
                     <div>
                         <h3>Quiz preview: {selectedQuiz.name}</h3>
