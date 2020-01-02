@@ -45,7 +45,6 @@ RUN cd ./server && /stack/stack install --only-dependencies
 WORKDIR /app
 COPY --chown=${USER}:${USER} ./server/src     ./server/src
 COPY --chown=${USER}:${USER} ./server/app     ./server/app
-COPY --chown=${USER}:${USER} ./server/LICENSE ./server
 RUN PATH=$PATH:/stack make server
 
 COPY --chown=${USER}:${USER} ./Makefile       ./
