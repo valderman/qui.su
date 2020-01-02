@@ -1,11 +1,16 @@
-.PHONY: all client server clean run docker docker-run
-DOCKER_TAG ?= hootsman:latest
-BUILDDIR    = ./_app
+.PHONY: all client server clean run docker docker-run push
+DOCKER_TAG   ?= hootsman:latest
+UPSTREAM_TAG ?= valderman/hootsman:latest
+BUILDDIR      = ./_app
 
 all: client server
 
 run: all
 	cd $(BUILDDIR) && ./hootsman-exe
+
+push:
+	docker build -t $(UPSTREAM_TAG) .
+	docker push $(UPSTREAM_TAG)
 
 docker: Dockerfile
 	docker build -t $(DOCKER_TAG) .
