@@ -75,8 +75,9 @@ Can you use raw HTML in quizzes?
                         An answer may be marked as <em>correct</em> by
                         surrounding it with [brackets], &#123;braces&#125;,
                         (parentheses) or &lt;angle brackets&gt;, by
-                        adding <em>(correct)</em> as a prefix or suffix,
-                        or by adding an arrow (-&gt; or &lt;-) pointing to it.
+                        adding <em>(correct)</em> as a prefix or suffix, an
+                        exclamation mark as a prefix,
+                        or an arrow (-&gt; or &lt;-) pointing to it.
                     </p>
                 </li>
             </ul>
