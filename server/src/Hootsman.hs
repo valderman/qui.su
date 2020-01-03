@@ -24,6 +24,8 @@ instance MimeRender OctetStream a => MimeRender HTML a where
 type API
   =    "api" :> (Questioner.API :<|> Respondent.API :<|> User.API)
   :<|> Get '[HTML] BS.ByteString
+  :<|> "present"  :> Capture "qid" Int :> Get '[HTML] BS.ByteString
+  :<|> "overhead" :> Capture "qid" Int :> Get '[HTML] BS.ByteString
   :<|> "s" :> Raw
   :<|> Capture "quiz" Text :> Get '[HTML] BS.ByteString
 
@@ -33,6 +35,8 @@ endpoints env
   :<|> Respondent.endpoints env
   :<|> User.endpoints env)
   :<|> serveIndex env
+  :<|> const (serveIndex env)
+  :<|> const (serveIndex env)
   :<|> serveDirectoryWebApp (staticFileDir env)
   :<|> const (serveIndex env)
 
