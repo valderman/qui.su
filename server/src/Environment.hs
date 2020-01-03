@@ -93,7 +93,7 @@ new = liftIO $ do
     , tokenExpiry = 4*3600
     , tokenKey = key
     , appId = "qui.su"
-    , urlLength = 6
+    , urlLength = 4
     , staticFileDir = staticDir
     , httpPort = port
     }
