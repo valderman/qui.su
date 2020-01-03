@@ -4,7 +4,7 @@ import QuestionPieChart from './QuestionPieChart.jsx';
 import './css/Deck.css';
 
 const SIT_TIGHT = "Sit tight, the next question is coming right up!";
-const THE_END = "That's the end of the quiz, thanks for participating!";
+const THE_END = "Be patient, this quiz hasn't started yet!";
 
 class Deck extends React.Component {
     constructor(props) {
