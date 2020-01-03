@@ -20,7 +20,7 @@ docker-run: docker
 
 client: $(BUILDDIR)
 	cd client && npm run build
-	cp -r client/build $(BUILDDIR)/static
+	cp -rf client/build $(BUILDDIR)/static
 
 server: $(BUILDDIR)
 	cd server && stack install --local-bin-path ../$(BUILDDIR)
