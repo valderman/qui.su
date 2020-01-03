@@ -3,6 +3,7 @@
 module Hootsman (hootsMain) where
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.ByteString as BS
+import Data.Text (Text)
 import Network.HTTP.Media ((//), (/:))
 import Network.Wai.Handler.Warp (run)
 import Servant
@@ -23,7 +24,8 @@ instance MimeRender OctetStream a => MimeRender HTML a where
 type API
   =    "api" :> (Questioner.API :<|> Respondent.API :<|> User.API)
   :<|> Get '[HTML] BS.ByteString
-  :<|> Raw
+  :<|> "s" :> Raw
+  :<|> Capture "quiz" Text :> Get '[HTML] BS.ByteString
 
 endpoints :: Env -> Server API
 endpoints env
@@ -32,6 +34,7 @@ endpoints env
   :<|> User.endpoints env)
   :<|> serveIndex env
   :<|> serveDirectoryWebApp (staticFileDir env)
+  :<|> const (serveIndex env)
 
 serveIndex :: Env -> Handler BS.ByteString
 serveIndex env = liftIO $ do
