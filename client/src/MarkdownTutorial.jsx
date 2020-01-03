@@ -62,11 +62,11 @@ function MarkdownTutorial(props) {
                       </code>
                 </pre>
             }
+            <button onClick={importQuiz}>Add this quiz to my library</button>
             {editing
             ? <button onClick={() => edit(false)}>Stop editing</button>
             : <button onClick={() => edit(true)}>Edit this quiz</button>
             }
-            <button onClick={importQuiz}>Add this quiz to my library</button>
 
             <h4>What did I just read?</h4>
             <p>
