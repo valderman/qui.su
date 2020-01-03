@@ -66,13 +66,20 @@ setNextQuestion oid qzid qid stats = transaction $ do
 
 -- | Creates the given quiz for the given user, provided that the quiz has
 --   at least one question.
-createQuizFor :: ID User -> Text -> MQ.Quiz -> SeldaM s Quiz
+--   Returns @Nothing@ if a quiz already exists with the given URL.
+createQuizFor :: ID User -> Text -> MQ.Quiz -> SeldaM s (Maybe Quiz)
 createQuizFor oid url quiz = transaction $ do
     when (null $ MQ.questions quiz) $ do
       fail "quiz needs at least one question"
-    qid <- insertWithPK quizzes [quiz']
-    zipWithM_ (insertQuestion qid) (MQ.questions quiz) [0..]
-    return (quiz' {quizId = qid})
+    qids <- query $ do
+      #quizId `from` select quizzes `suchThat` \q -> q ! #quizUrl .== literal url
+    case qids of
+      [] -> do
+        qid <- insertWithPK quizzes [quiz']
+        zipWithM_ (insertQuestion qid) (MQ.questions quiz) [0..]
+        return (Just $ quiz' {quizId = qid})
+      _ -> do
+        return Nothing
   where
     quiz' = DB.Quiz
       { quizId = def

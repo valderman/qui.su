@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeOperators, DataKinds, OverloadedStrings #-}
+{-# LANGUAGE TypeOperators, DataKinds, OverloadedStrings, TypeApplications #-}
 module Endpoints.Questioner (API, endpoints) where
 import qualified Data.ByteString as BS
 import Data.Text (Text, pack)
@@ -101,12 +101,23 @@ quizDone qid = do
 newQuiz :: Maybe Text -> BS.ByteString -> AppM 'M.User Quiz
 newQuiz _typ file = do
     Just uid <- fmap sub <$> getAuthToken
-    url <- genQuizUrl =<< getUrlLength
+    len <- getUrlLength
     case quiz of
-      Just q -> runDB $ Backend.createQuizFor uid url q
-      _      -> throwError $ err415 { errBody = "only markdown supported" }
+      Just q -> retry 5 $ do
+        -- retry up to five times in case of URL collision
+        -- TODO: do something more sensible here
+        url <- genQuizUrl len
+        runDB $ Backend.createQuizFor uid url q
+      _ -> do
+        throwError $ err415 { errBody = "only markdown supported" }
   where
     quiz = parseQuiz (decodeUtf8 file)
+    retry n m = do
+      result <- m
+      case result of
+        Just x        -> return x
+        _ | n > 0     -> retry (n-1) m
+          | otherwise -> fail "unable to generate unique quiz url"
 
 genUrlChar :: IO Char
 genUrlChar = do
