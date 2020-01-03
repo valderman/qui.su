@@ -1,32 +1,47 @@
 import React, { useState }
-                   from 'react';
+                      from 'react';
 import { Switch, Route, Redirect, BrowserRouter as Router }
-                   from 'react-router-dom';
-import Deck        from './Deck.jsx';
-import Presenter   from './Presenter.jsx';
-import QuizApi     from './QuizApi.js';
-import LandingPage from './LandingPage.jsx';
-import HomePage    from './HomePage.jsx';
-import Settings    from './Settings.js';
+                      from 'react-router-dom';
+import Deck           from './Deck.jsx';
+import Presenter      from './Presenter.jsx';
+import QuizApi        from './QuizApi.js';
+import LandingPage    from './LandingPage.jsx';
+import HomePage       from './HomePage.jsx';
+import Settings       from './Settings.js';
+import StorageManager from './StorageManager.js';
 import './css/App.css';
 import './css/theme.css';
 import './css/fontawesome.css';
 import 'highlight.js/styles/github.css';
 
+let onLogout, onError;
+const storageManager = new StorageManager('app', 8*3600*1000);
+const api = new QuizApi(Settings.API_PREFIX, storageManager, async () => {
+    await onLogout();
+    onError("Your session has expired, please log in again.");
+});
+
 function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
-    let api;
-    const onLogout = async () => {
-        const auth2 = window.gapi.auth2.getAuthInstance();
-        await auth2.signOut();
+    onError = setError;
+    onLogout = async () => {
+        if(window.gapi) {
+            const auth2 = window.gapi.auth2.getAuthInstance();
+            await auth2.signOut();
+        }
         api.unsetAuthToken();
         setUser(null);
+        storageManager.remove('loggedInUser');
     }
-    api = new QuizApi(Settings.API_PREFIX, async () => {
-        await onLogout();
-        setError("Your session has expired, please log in again.");
-    });
+    const onLogin = u => {
+        setUser(u);
+        storageManager.write('loggedInUser', u);
+    };
+    const storedUser = storageManager.read('loggedInUser');
+    if(!user && storedUser) {
+        onLogin(storedUser);
+    }
     return (
         <div className="App">
             <Router>
@@ -57,7 +72,7 @@ function App() {
                     />
                     <Route path="/">
                         { user ? <HomePage api={api} onLogout={onLogout} user={user} />
-                               : <LandingPage api={api} error={error} onLogin={setUser} />
+                               : <LandingPage api={api} error={error} onLogin={onLogin} />
                         }
                     </Route>
                 </Switch>

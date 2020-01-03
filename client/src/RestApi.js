@@ -5,14 +5,10 @@ function getTimestamp() {
 }
 
 class RestApi {
-    constructor(baseUrl, onExpire) {
+    constructor(baseUrl, storageManager, onExpire) {
         this.baseUrl = baseUrl || "";
+        this.storageManager = storageManager;
         this.onExpire = onExpire || (() => undefined);
-        const authToken = window.localStorage.getItem('restApiAuthToken');
-        const expires = window.localStorage.getItem('restApiAuthTokenExpires');
-        if(expires > getTimestamp()) {
-            this.setAuthToken(authToken, expires);
-        }
     }
 
     url(parts) {
@@ -20,19 +16,19 @@ class RestApi {
     }
 
     setAuthHeader(init) {
-        if(!init) {
-            init = {};
+        const [token, ttl] = this.storageManager.readWithLifetime('restApiAuthToken');
+        if(ttl <= 0) {
+            this.onExpire();
+            throw '403';
         }
-        if(this.authToken) {
-            if(this.expires && this.expires <= getTimestamp()) {
-                const f = this.onExpire;
-                f();
-            } else {
-                if(!init.headers) {
-                    init.headers = {};
-                }
-                init.headers.Authentication = 'Bearer ' + this.authToken;
+        if(token) {
+            if(!init) {
+                init = {};
             }
+            if(!init.headers) {
+                init.headers = {};
+            }
+            init.headers.Authentication = 'Bearer ' + token;
         }
         return init;
     }
@@ -85,17 +81,11 @@ class RestApi {
     }
 
     setAuthToken(token, expires) {
-        this.authToken = token;
-        this.expires = expires;
-        window.localStorage.setItem('restApiAuthToken', token);
-        window.localStorage.setItem('restApiAuthTokenExpires', expires);
+        this.storageManager.write('restApiAuthToken', token, (expires - getTimestamp())*1000);
     }
 
     unsetAuthToken() {
-        window.localStorage.removeItem('restApiAuthToken');
-        window.localStorage.removeItem('restApiAuthTokenExpires');
-        delete this.authToken;
-        delete this.expires;
+        this.storageManager.remove('restApiAuthToken');
     }
 }
 export default RestApi;

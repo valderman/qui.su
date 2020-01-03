@@ -28,8 +28,8 @@ function parseNextQuestion(q) {
 }
 
 class QuizApi extends RestApi {
-    constructor(baseUrl, onExpire) {
-        super(baseUrl || "", onExpire);
+    constructor(baseUrl, storageManager, onExpire) {
+        super(baseUrl || "", storageManager, onExpire);
     }
 
     async answer(quizId, altId) {

@@ -20,7 +20,7 @@ function LandingPage(props) {
                     onSuccess={props.onLogin}
                 />
             </p>
-            {props.error && <p class="error">{props.error}</p>}
+            {props.error && <p className="error">{props.error}</p>}
         </div>
     );
 }

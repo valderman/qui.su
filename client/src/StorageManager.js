@@ -5,22 +5,41 @@ class StorageManager {
         this.store = store || window.localStorage;
     }
 
-    read(key, defaultValue = null) {
+    readWithLifetime(key, defaultValue = null) {
         const text = this.store[`${this.managerKey}:${key}`];
         if(!text) {
-            return defaultValue;
+            return [defaultValue, undefined];
         }
         try {
             const data = JSON.parse(text);
-            if(data.expires < new Date().getTime()) {
+            const ttl = data.expires - new Date().getTime();
+            if(ttl <= 0) {
                 this.remove(key);
-                return defaultValue;
+                return [defaultValue, ttl];
             }
-            return data.data;
+            return [data.data, ttl];
         } catch(e) {
             this.remove(key);
-            return defaultValue;
+            return [defaultValue, undefined];
         }
+    }
+
+    read(key, defaultValue = null) {
+        return this.readWithLifetime(key, defaultValue)[0];
+    }
+
+    getExpiryTime(key) {
+        const text = this.store[`${this.managerKey}:${key}`];
+        try {
+            return JSON.parse(text).expires;
+        } catch(e) {
+            return undefined;
+        }
+    }
+
+    getRemainingLifetime(key) {
+        const expires = this.getExpiryTime(key);
+        return expires - new Date().getTime();
     }
 
     write(key, value, lifetime) {

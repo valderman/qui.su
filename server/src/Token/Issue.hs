@@ -23,7 +23,6 @@ genKey = liftIO $ do
 
 issue :: (A.ToJSON sub, MonadIO m) => Key -> TokenInfo sub -> m Jwt
 issue key ti = liftIO $ do
-  t <- getCurrentTime
   let enc = JwsEncoding tokenSignAlgo
   tok <- encode [key] enc (Claims $ BS.toStrict $ A.encode ti)
   case tok of
