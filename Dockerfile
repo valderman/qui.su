@@ -45,12 +45,12 @@ RUN cd ./server && /stack/stack install --only-dependencies
 WORKDIR /app
 COPY --chown=${USER}:${USER} ./server/src     ./server/src
 COPY --chown=${USER}:${USER} ./server/app     ./server/app
-RUN PATH=$PATH:/stack make server
+RUN PATH=$PATH:/stack make -j server
 
 COPY --chown=${USER}:${USER} ./Makefile       ./
 COPY --chown=${USER}:${USER} ./client/src     ./client/src
 COPY --chown=${USER}:${USER} ./client/public  ./client/public
-RUN PATH=$PATH:/stack make
+RUN PATH=$PATH:/stack make -j
 
 VOLUME /app
 
