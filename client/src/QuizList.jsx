@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Uploader from './Uploader.jsx';
 import List from './List.jsx';
 import "./css/QuizList.css";
@@ -7,7 +7,7 @@ import "./css/QuizList.css";
 function QuizList(props) {
     const [quizzes, setQuizzes] = useState([]);
     const [selected, select] = useState(null);
-    const [goto, setGoto] = useState(null);
+    const history = useHistory();
 
     const onSelect = e => {
         select(e);
@@ -44,7 +44,7 @@ function QuizList(props) {
         {
             title: 'Start or resume quiz',
             className: 'fa-play-circle',
-            onClick: q => setGoto('/present/' + q.key)
+            onClick: q => history.push('/present/' + q.key)
         },
         {
             title: 'Open overhead view (new window)',
@@ -63,9 +63,6 @@ function QuizList(props) {
         },
     ];
 
-    if(goto) {
-        return (<Redirect to={goto} />)
-    }
     return (
         <div className="quizList">
             <List
