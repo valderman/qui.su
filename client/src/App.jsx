@@ -25,14 +25,21 @@ function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     onError = setError;
-    onLogout = async () => {
-        if(window.gapi) {
-            const auth2 = window.gapi.auth2.getAuthInstance();
-            await auth2.signOut();
-        }
-        api.unsetAuthToken();
-        setUser(null);
-        storageManager.remove('loggedInUser');
+    onLogout = () => {
+        const script = document.createElement('SCRIPT');
+        script.src = 'https://apis.google.com/js/platform.js';
+        script.async = true;
+        script.defer = true;
+        script.onload = async () => {
+            if(window.gapi) {
+                const auth2 = window.gapi.auth2.getAuthInstance();
+                await auth2.signOut();
+            }
+            api.unsetAuthToken();
+            storageManager.remove('loggedInUser');
+            setUser(null);
+        };
+        document.head.appendChild(script);
     }
     const onLogin = u => {
         setUser(u);

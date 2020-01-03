@@ -12,6 +12,10 @@
     }
 }
 
+.widgets .buttons {
+    text-align: right;
+}
+
 .widgets h3 {
     text-align: center;
 }

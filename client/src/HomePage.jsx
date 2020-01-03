@@ -18,31 +18,38 @@ function HomePage(props) {
                 for adding interactive quizzes to your lectures.
             </p>
             <div className="widgets">
-                <div>
-                    <h3>Your quizzes</h3>
-                    <QuizList
-                        api={props.api}
-                        onSelect={selectQuiz}
-                        tick={tick}
-                    />
-                </div>
-                {!selectedQuiz &&
-                    <MarkdownTutorial
-                        api={props.api}
-                        onAddQuiz={() => setTick(tick+1)}
-                    />
-                }
-                {selectedQuiz &&
+                <div className="left">
                     <div>
-                        <h3>Quiz preview: {selectedQuiz.name}</h3>
-                        <Presenter
+                        <h3>Your quizzes</h3>
+                        <QuizList
                             api={props.api}
-                            preview={true}
-                            id={selectedQuiz.quizId}
-                            key={selectedQuiz.quizId}
+                            onSelect={selectQuiz}
+                            tick={tick}
                         />
                     </div>
-                }
+                    <div className="buttons">
+                        <button onClick={props.onLogout}>Sign out</button>
+                    </div>
+                </div>
+                <div className="right">
+                    {!selectedQuiz &&
+                        <MarkdownTutorial
+                            api={props.api}
+                            onAddQuiz={() => setTick(tick+1)}
+                        />
+                    }
+                    {selectedQuiz &&
+                        <div>
+                            <h3>Quiz preview: {selectedQuiz.name}</h3>
+                            <Presenter
+                               api={props.api}
+                               preview={true}
+                               id={selectedQuiz.quizId}
+                               key={selectedQuiz.quizId}
+                           />
+                       </div>
+                    }
+                </div>
             </div>
         </main>
     );
