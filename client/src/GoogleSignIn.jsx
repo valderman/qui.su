@@ -1,6 +1,10 @@
 import React from 'react';
 import './css/GoogleSignIn.css';
 
+const NO_CROSS_SITE_COOKIES = `You need to enable cross-site cookies for this site to sign in.`;
+const LOGIN_FAILED = `We were unable to sign you in.
+Are you sure you have cross-site cookies enabled for this site?`;
+
 class GoogleSignIn extends React.Component {
     constructor(props) {
         super(props);
@@ -12,22 +16,26 @@ class GoogleSignIn extends React.Component {
         const result = await this.api.authenticate(googleUser.getAuthResponse().id_token);
         if(result && this.props.onSuccess instanceof Function) {
             this.props.onSuccess(result);
-        } else if(this.props.onFailure instanceof Function) {
-            this.props.onFailure();
+        } else {
+            this.onFailure(LOGIN_FAILED);
         }
     }
 
-    onFailure() {
+    onFailure(e) {
         if(this.props.onFailure instanceof Function) {
-            this.props.onFailure();
+            this.props.onFailure(e);
         }
     }
 
     initSignInButton() {
-        window.gapi.load('auth2', () => {
-            this.auth2 = window.gapi.auth2.init({
-                client_id: this.clientId
-            });
+        window.gapi.load('auth2', async () => {
+            try {
+                await window.gapi.auth2.init({
+                    client_id: this.clientId
+                });
+            } catch(e) {
+                this.onFailure(NO_CROSS_SITE_COOKIES);
+            }
         });
 
         window.gapi.load('signin2', () => {
@@ -37,7 +45,7 @@ class GoogleSignIn extends React.Component {
                 longtitle: 'true',
                 theme: 'dark',
                 onsuccess: this.onSuccess.bind(this),
-                onfailure: this.onFailure.bind(this)
+                onfailure: () => this.onFailure(LOGIN_FAILED)
             });
         });
     }

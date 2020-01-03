@@ -18,6 +18,7 @@ function LandingPage(props) {
                     api={props.api}
                     clientId={Settings.GOOGLE_CLIENT_ID}
                     onSuccess={props.onLogin}
+                    onFailure={props.onLoginFail}
                 />
             </p>
             {props.error && <p className="error">{props.error}</p>}

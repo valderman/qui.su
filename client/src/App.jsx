@@ -30,14 +30,19 @@ function App() {
         script.src = 'https://apis.google.com/js/platform.js';
         script.async = true;
         script.defer = true;
-        script.onload = async () => {
-            if(window.gapi) {
-                const auth2 = window.gapi.auth2.getAuthInstance();
-                await auth2.signOut();
-            }
-            api.unsetAuthToken();
-            storageManager.remove('loggedInUser');
-            setUser(null);
+        script.onload = () => {
+            window.gapi.load('auth2', async () => {
+                await window.gapi.auth2.init({
+                    client_id: Settings.GOOGLE_CLIENT_ID
+                });
+                window.gapi.load('signin2', async () => {
+                    const auth2 = window.gapi.auth2.getAuthInstance();
+                    await auth2.signOut();
+                    api.unsetAuthToken();
+                    storageManager.remove('loggedInUser');
+                    setUser(null);
+                });
+            });
         };
         document.head.appendChild(script);
     }
@@ -78,8 +83,17 @@ function App() {
                         render={p => <Deck url={p.match.params.id} api={api} />}
                     />
                     <Route path="/">
-                        { user ? <HomePage api={api} onLogout={onLogout} user={user} />
-                               : <LandingPage api={api} error={error} onLogin={onLogin} />
+                        { user ? <HomePage
+                                     api={api}
+                                     onLogout={onLogout}
+                                     user={user}
+                                 />
+                               : <LandingPage
+                                     api={api}
+                                     error={error}
+                                     onLogin={onLogin}
+                                     onLoginFail={setError}
+                                 />
                         }
                     </Route>
                 </Switch>
