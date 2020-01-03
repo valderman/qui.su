@@ -36,9 +36,9 @@ function QuestionPieChart(props) {
     } else {
         return (
             <div className="pieChartContainer">
-                <div>
+                <h2>
                     {shorten(stripHTML(props.question))}
-                </div>
+                </h2>
                 <PieChart
                     className="pieChart"
                     data={props.alts.map(fromAlt)}
@@ -52,7 +52,7 @@ function QuestionPieChart(props) {
                     viewBoxSize={[100,50]}
                     labelStyle={{
                         fill: 'black',
-                        fontSize: '0.12em',
+                        fontSize: '0.15em',
                         fontFamily: 'sans-serif'
                     }}
                 />

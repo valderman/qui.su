@@ -51,9 +51,6 @@ function App() {
                                  : <Redirect to="/" />
                         }
                     />
-                    <Route path="/index.html">
-                        <Redirect to="/" />
-                    </Route>
                     <Route
                         path="/:id"
                         render={p => <Deck url={p.match.params.id} api={api} />}
