@@ -23,3 +23,5 @@ Still left to do
 * Schedule Google key fetch when keys expire, not at fixed interval.
 * Proper 404 when quiz name resolve fails
 * Swipe events for presenter
+* Scroll down indicator on mobile when many alternatives
+* Replace pie chart component

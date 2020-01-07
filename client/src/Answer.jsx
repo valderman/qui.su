@@ -3,7 +3,7 @@ import './css/Answer.css';
 
 function Answer(props) {
     const alts = props.alts || [];
-    const submit = key => props.onSubmit ? props.onSubmit(key) : null;
+    const submit = props.onSubmit ? props.onSubmit : (() => undefined);
     const renderAlt = (key, text) => {
         if(props.preview) {
             return (

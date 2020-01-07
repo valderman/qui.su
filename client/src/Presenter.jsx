@@ -52,6 +52,7 @@ class Presenter extends React.Component {
         state.alts = q.done ? [] : q.alts;
         state.stats = q.stats;
         state.text = q.text || 'Your quiz is all set up and good to go!';
+        state.done = q.done;
         this.setState(state);
     }
 
@@ -123,6 +124,9 @@ class Presenter extends React.Component {
                     alts={this.state.alts}
                 />
             );
+        } else if(this.state.done) {
+            const className = "info" + (this.preview ? " preview" : "");
+            return <p className={className}>{this.state.text}</p>
         } else {
             return (
                 <Question
@@ -158,9 +162,8 @@ class Presenter extends React.Component {
                 }
                 <button onClick={() => this.step(1)}>Next</button>
                 <p>
-                    {this.state.qix >= 0
-                     ? (this.state.qix+1) + " / " + this.state.qids.length
-                     : "Quiz done!"
+                    {this.state.qix >= 0 &&
+                        (this.state.qix+1) + " / " + this.state.qids.length
                     }
                 </p>
             </div>

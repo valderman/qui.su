@@ -43,3 +43,11 @@
     font-family: courier new;
     color: rgba(0,0,255,0.6);
 }
+
+.deck .info {
+    font-size: 24pt;
+}
+
+.deck .info.preview {
+    font-size: 16pt;
+}
