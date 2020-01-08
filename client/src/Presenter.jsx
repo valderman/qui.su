@@ -112,9 +112,11 @@ class Presenter extends React.Component {
 
     keyPress(e) {
         switch(e.keyCode) {
+            case 33:
             case 37:
                 this.step(-1);
                 break;
+            case 34:
             case 39:
                 this.step(1);
                 break;
