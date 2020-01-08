@@ -51,7 +51,9 @@ function App() {
         storageManager.write('loggedInUser', u);
     };
     const storedUser = storageManager.read('loggedInUser');
+    let renderUser = user;
     if(!user && storedUser) {
+        renderUser = storedUser;
         onLogin(storedUser);
     }
     return (
@@ -83,17 +85,18 @@ function App() {
                         render={p => <Deck url={p.match.params.id} api={api} />}
                     />
                     <Route path="/">
-                        { user ? <HomePage
-                                     api={api}
-                                     onLogout={onLogout}
-                                     user={user}
-                                 />
-                               : <LandingPage
-                                     api={api}
-                                     error={error}
-                                     onLogin={onLogin}
-                                     onLoginFail={setError}
-                                 />
+                        { renderUser
+                              ? <HomePage
+                                    api={api}
+                                    onLogout={onLogout}
+                                    user={renderUser}
+                                />
+                              : <LandingPage
+                                    api={api}
+                                    error={error}
+                                    nLogin={onLogin}
+                                    onLoginFail={setError}
+                                />
                         }
                     </Route>
                 </Switch>
