@@ -29,8 +29,7 @@ import Backend.User (getUserById)
 import Token.Verify
 import Token.Hootsman
 
-import Debug.Trace
-tr x = trace (show x) x
+data Priv = Anyone | User | Admin
 
 newtype AppM (p :: Priv) a = AppM { unApp :: ReaderT E.Env Handler a }
   deriving (Functor, Applicative, Monad, MonadEnv, MonadIO, MonadError ServerError)
@@ -58,8 +57,6 @@ instance Privilege 'Admin where
 forbidden :: MonadEnv m => Text -> m ()
 forbidden text = liftHandler $ do
   throwError $ err403 { errBody = BS.fromStrict (encodeUtf8 text) }
-
-data Priv = Anyone | User | Admin
 
 class MonadApp m where
   runAppM :: Privilege p => E.Env -> m p a -> Handler a
