@@ -11,6 +11,7 @@
 
 .question div.overhead, .question .overhead div {
     font-size: 24pt;
+    margin-bottom: 2em;
 }
 
 .question div.preview, .question .preview div {
@@ -18,4 +19,8 @@
     padding: 0;
     margin: 0.5em;
     margin-bottom: 0;
+}
+
+.question hr {
+    width: 60%;
 }

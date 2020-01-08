@@ -5,10 +5,11 @@ function Answer(props) {
     const alts = props.alts || [];
     const submit = props.onSubmit ? props.onSubmit : (() => undefined);
     const renderAlt = (key, text) => {
-        if(props.preview) {
+        if(props.preview || props.overhead) {
+            const answerClass = props.preview ? "preview" : "overhead";
             return (
                 <p
-                    className="preview"
+                    className={answerClass}
                     key={key}
                     dangerouslySetInnerHTML={{__html:text}}
                 />

@@ -22,13 +22,13 @@ function Question(props) {
                 className={textClass}
                 dangerouslySetInnerHTML={{__html:props.text}}
             />
-            {(props.overhead && !props.preview) ||
-                <Answer
-                    alts={props.alts}
-                    onSubmit={props.onSubmit}
-                    preview={props.preview}
-                />
-            }
+           {(props.preview || props.overhead) && <hr/>}
+            <Answer
+                alts={props.alts}
+                onSubmit={props.onSubmit}
+                preview={props.preview}
+                overhead={props.overhead}
+            />
         </div>
     );
 }

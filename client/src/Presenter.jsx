@@ -146,26 +146,31 @@ class Presenter extends React.Component {
         const participant = window.location.host + '/' + this.state.url;
         const partLink = protocol + '//' + participant;
         const textClass = this.preview ? "deck preview" : "deck";
+        const containerClass = this.preview
+            ? "deckContainer preview"
+            : "deckContainer";
         return (
-            <div className={textClass} id="presenter">
-                {this.questionOrStats()}
-                {this.preview ||
-                    <p className="participationLink">
-                        To participate, go to <a href={partLink}>{participant}</a>
-                    </p>
-                }
-                <button onClick={() => this.step(-1)}>Previous</button>
-                {this.hasQuestion() &&
-                 <button onClick={() => this.toggleStats()}>
-                     {"Show " + (this.state.stats ? "question" : "stats")}
-                 </button>
-                }
-                <button onClick={() => this.step(1)}>Next</button>
-                <p>
-                    {this.state.qix >= 0 &&
-                        (this.state.qix+1) + " / " + this.state.qids.length
+            <div className={containerClass}>
+                <div className={textClass} id="presenter">
+                    {this.questionOrStats()}
+                    {this.preview ||
+                     <p className="participationLink">
+                         To participate, go to <a href={partLink}>{participant}</a>
+                     </p>
                     }
-                </p>
+                    <button onClick={() => this.step(-1)}>Previous</button>
+                    {this.hasQuestion() &&
+                     <button onClick={() => this.toggleStats()}>
+                         {"Show " + (this.state.stats ? "question" : "stats")}
+                     </button>
+                    }
+                    <button onClick={() => this.step(1)}>Next</button>
+                    <p>
+                        {this.state.qix >= 0 &&
+                         (this.state.qix+1) + " / " + this.state.qids.length
+                        }
+                    </p>
+                </div>
             </div>
         );
     }

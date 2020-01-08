@@ -101,12 +101,14 @@ class Deck extends React.Component {
         const participant = window.location.host + '/' + this.state.url;
         const partLink = protocol + '//' + participant;
         return (
+            <div className="deckContainer">
             <div className="deck">{this.renderContent()}
                 {this.overheadMode &&
                     <p className="participationLink">
                         To participate, go to <a href={partLink}>{participant}</a>
                     </p>
                 }
+            </div>
             </div>
         );
     }
