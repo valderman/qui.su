@@ -11,7 +11,8 @@ class Presenter extends React.Component {
             qix: 0,
             qids: [],
             stats: false,
-            id: props.id
+            id: props.id,
+            answers: 0
         };
         this.api = props.api;
         this.preview = props.preview || false;
@@ -29,14 +30,22 @@ class Presenter extends React.Component {
             qids = await p;
         }
         const url = await this.api.getQuizUrl(this.state.id);
-        this.setState({qids: qids, url: url}, () => {
+        const answers = q.alts.reduce((n, alt) => n+alt.responses, 0);
+        this.setState({qids: qids, url: url, answers: answers}, () => {
             this.updateQuestion(q);
         });
         document.addEventListener('keyup', this.keyPress);
+        this.countAnswers(this.state.id);
     }
 
     componentWillUnmount() {
         document.removeEventListener('keyup', this.keyPress);
+    }
+
+    async countAnswers(qid) {
+        await this.api.waitForAnswer(qid);
+        this.setState({answers: this.state.answers+1});
+        await this.countAnswers(qid);
     }
 
     updateQuestion(q) {
@@ -147,8 +156,8 @@ class Presenter extends React.Component {
         const partLink = protocol + '//' + participant;
         const textClass = this.preview ? "deck preview" : "deck";
         const containerClass = this.preview
-            ? "deckContainer preview"
-            : "deckContainer";
+                             ? "deckContainer preview"
+                             : "deckContainer";
         return (
             <div className={containerClass}>
                 <div className={textClass} id="presenter">
@@ -170,6 +179,9 @@ class Presenter extends React.Component {
                          (this.state.qix+1) + " / " + this.state.qids.length
                         }
                     </p>
+                    {this.preview ||
+                     <p>{this.state.answers + " answers"}</p>
+                    }
                 </div>
             </div>
         );

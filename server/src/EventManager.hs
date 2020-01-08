@@ -17,6 +17,7 @@ data Event
   = NextQuestion Question [Alt]
   | ShowStats Question [Alt]
   | QuizDone
+  | AnswerReceived (ID Alt)
 
 type NotifierMap = M.IntMap (Notifier.Notifier Event)
 

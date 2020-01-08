@@ -42,6 +42,10 @@ class QuizApi extends RestApi {
         return parseNextQuestion(q);
     }
 
+    async waitForAnswer(quizId) {
+        return await this.longPoll(["answers", quizId]);
+    }
+
     async getQuestion(quizId) {
         const q = await this.get(["quiz", quizId]);
         return parseNextQuestion(q);

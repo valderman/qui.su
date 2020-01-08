@@ -50,6 +50,11 @@ type ResetAnswers
   :> Capture "quizid" (ID Quiz)
   :> AuthHeader
   :> Get '[JSON] ()
+type AwaitAnswer
+  =  "answers"
+  :> Capture "quizid" (ID Quiz)
+  :> AuthHeader
+  :> Get '[JSON] (ID Alt)
 
 type API
   =    Notify
@@ -59,6 +64,7 @@ type API
   :<|> Quizzes
   :<|> DeleteQuiz
   :<|> ResetAnswers
+  :<|> AwaitAnswer
 
 endpoints :: Env -> Server API
 endpoints
@@ -69,9 +75,17 @@ endpoints
   <|> authed getQuizzes
   <|> authed deleteQuiz
   <|> authed resetAnswers
+  <|> authed awaitAnswer
 
 quizQuestions :: ID Quiz -> AppM 'Anyone [ID Question]
 quizQuestions = runDB . Backend.getQuizQuestionIds
+
+awaitAnswer :: ID Quiz -> AppM 'M.User (ID Alt)
+awaitAnswer qid = do
+  notification <- waitEvent qid
+  case notification of
+    AnswerReceived aid -> return aid
+    _                  -> awaitAnswer qid
 
 notify :: ID Quiz -> ID Question -> Bool -> AppM 'M.User NextQuestion
 notify qzid qid stats = do

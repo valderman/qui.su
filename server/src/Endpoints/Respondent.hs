@@ -60,6 +60,8 @@ wait qid = do
       return $ Stats $ markdownQuestionInfo (QuestionInfo q alts)
     QuizDone -> do
       return Done
+    _ -> do
+      wait qid
 
 getQuestion :: ID DB.Quiz -> AppM 'Anyone NextQuestion
 getQuestion qid = do
@@ -82,4 +84,6 @@ getQuizUrlById :: ID DB.Quiz -> AppM 'Anyone Text
 getQuizUrlById = runDB . Backend.getQuizUrlById
 
 answer :: ID DB.Quiz -> ID DB.Alt -> AppM 'Anyone ()
-answer qid ans = runDB $ Backend.answerQuestion qid ans
+answer qid ans = do
+  runDB $ Backend.answerQuestion qid ans
+  raiseEvent qid (AnswerReceived ans)
