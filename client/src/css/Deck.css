@@ -19,8 +19,8 @@
 
 @media(min-width: 1200px) {
     .deckContainer:not(.preview) {
-        width: 80%;
-        left: 10%;
+        width: 70%;
+        left: 15%;
     }
 }
 @media(max-width: 1199px) {
