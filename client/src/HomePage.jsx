@@ -27,9 +27,6 @@ function HomePage(props) {
                             tick={tick}
                         />
                     </div>
-                    <div className="buttons">
-                        <button onClick={props.onLogout}>Sign out</button>
-                    </div>
                 </div>
                 <div className="right">
                     {!selectedQuiz &&

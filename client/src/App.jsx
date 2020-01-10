@@ -8,6 +8,7 @@ import QuizApi        from './QuizApi.js';
 import LandingPage    from './LandingPage.jsx';
 import HomePage       from './HomePage.jsx';
 import Settings       from './Settings.js';
+import Header         from './Header.jsx';
 import StorageManager from './StorageManager.js';
 import { googleSignOut } from './GoogleSignIn.jsx';
 import './css/App.css';
@@ -52,19 +53,27 @@ function App() {
                         render={p =>
                             <Deck
                                 id={p.match.params.id}
-                                api={api}
-                                overhead="true"
+                                   api={api}
+                                   overhead="true"
                             />
                         }
                     />
                     <Route
                         path="/present/:id"
                         render={p =>
-                            user ? <Presenter
-                                       id={p.match.params.id}
-                                       api={api}
-                                   />
+                            <div>
+                                <Header
+                                    api={api}
+                                    user={renderUser}
+                                    onSignOut={onLogout}
+                                />
+                                {user ? <Presenter
+                                            id={p.match.params.id}
+                                               api={api}
+                                />
                                  : <Redirect to="/" />
+                                }
+                            </div>
                         }
                     />
                     <Route
@@ -72,18 +81,23 @@ function App() {
                         render={p => <Deck url={p.match.params.id} api={api} />}
                     />
                     <Route path="/">
+                        <Header
+                            api={api}
+                            user={renderUser}
+                            onSignOut={onLogout}
+                        />
                         { renderUser
-                              ? <HomePage
-                                    api={api}
-                                    onLogout={onLogout}
-                                    user={renderUser}
-                                />
-                              : <LandingPage
-                                    api={api}
-                                    error={error}
-                                    onLogin={onLogin}
-                                    onLoginFail={setError}
-                                />
+                          ? <HomePage
+                                api={api}
+                                onLogout={onLogout}
+                                user={renderUser}
+                          />
+                          : <LandingPage
+                                api={api}
+                                error={error}
+                                onLogin={onLogin}
+                                onLoginFail={setError}
+                          />
                         }
                     </Route>
                 </Switch>
