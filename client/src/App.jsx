@@ -9,6 +9,7 @@ import LandingPage    from './LandingPage.jsx';
 import HomePage       from './HomePage.jsx';
 import Settings       from './Settings.js';
 import StorageManager from './StorageManager.js';
+import { googleSignOut } from './GoogleSignIn.jsx';
 import './css/App.css';
 import './css/theme.css';
 import './css/fontawesome.css';
@@ -25,27 +26,13 @@ function App() {
     const [user, setUser] = useState(null);
     const [error, setError] = useState(null);
     onError = setError;
-    onLogout = () => {
-        const script = document.createElement('SCRIPT');
-        script.src = 'https://apis.google.com/js/platform.js';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-            window.gapi.load('auth2', async () => {
-                await window.gapi.auth2.init({
-                    client_id: Settings.GOOGLE_CLIENT_ID
-                });
-                window.gapi.load('signin2', async () => {
-                    const auth2 = window.gapi.auth2.getAuthInstance();
-                    await auth2.signOut();
-                    api.unsetAuthToken();
-                    storageManager.remove('loggedInUser');
-                    setUser(null);
-                });
-            });
-        };
-        document.head.appendChild(script);
-    }
+    onLogout = gapi => {
+        googleSignOut(() =>  {
+            api.unsetAuthToken();
+            storageManager.remove('loggedInUser');
+            setUser(null);
+        });
+    };
     const onLogin = u => {
         setUser(u);
         storageManager.write('loggedInUser', u);
@@ -94,7 +81,7 @@ function App() {
                               : <LandingPage
                                     api={api}
                                     error={error}
-                                    nLogin={onLogin}
+                                    onLogin={onLogin}
                                     onLoginFail={setError}
                                 />
                         }
