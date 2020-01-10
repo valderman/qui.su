@@ -23,7 +23,7 @@ function Header(props) {
             }
             {props.user && props.user.isAdmin &&
              <li>
-                 <Link>Admin</Link>
+                 <Link to="/admin">Admin</Link>
              </li>
             }
         </menu>

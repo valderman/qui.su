@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings, OverloadedLabels #-}
 module Backend.User
-  ( getUserById, getUserByGoogleId
+  ( getUserById, getUserByGoogleId, findUsers
   , createUser
   ) where
 import Data.Maybe
@@ -23,3 +23,12 @@ createUser :: User -> SeldaM s User
 createUser u = do
   uid <- insertWithPK users [u]
   return $ u { userId = uid }
+
+findUsers :: Text -> Word -> SeldaM s [User]
+findUsers search lim = query $ limit 0 (fromIntegral lim) $ do
+    user <- select users
+    restrict (user ! #userName `like` search' .||
+              user ! #userEmail `like` search')
+    return user
+  where
+    search' = literal ("%" <> search <> "%")

@@ -103,6 +103,10 @@ class QuizApi extends RestApi {
         this.setAuthToken(result.token, result.expires);
         return result.user;
     }
+
+    async findUsers(search, max) {
+        return await this.get(["users", encodeURI(search || '%'), max]);
+    }
 }
 
 export default QuizApi;

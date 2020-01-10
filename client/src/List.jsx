@@ -4,6 +4,8 @@ import "./css/List.css";
 function List(props) {
     const onSelect = (props.onSelect || (() => undefined));
     const [selected, setSelected] = useState(null);
+    const items = props.items || [];
+    const buttons = props.buttons || [];
 
     const toggleSelect = (e, item) => {
         e.target.blur();
@@ -21,7 +23,7 @@ function List(props) {
             className={'fas ' + b.className}
             title={b.title instanceof Function ? b.title(i) : b.title}
             onClick={e => {
-                b.onClick(props.items[i]);
+                b.onClick(items[i]);
                 e.target.blur();
             }}
             key={b.key || b.title || b.className}
@@ -37,11 +39,11 @@ function List(props) {
                 {i.name}
             </button>
             <div className="buttons">
-                {props.buttons.map(b => renderButton(b, ix))}
+                {buttons.map(b => renderButton(b, ix))}
             </div>
         </li>;
 
-    return (<div className="itemList">{props.items.map(renderItem)}</div>);
+    return (<div className="itemList">{items.map(renderItem)}</div>);
 }
 
 export default List;

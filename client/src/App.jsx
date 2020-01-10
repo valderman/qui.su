@@ -10,6 +10,7 @@ import HomePage       from './HomePage.jsx';
 import Settings       from './Settings.js';
 import Header         from './Header.jsx';
 import StorageManager from './StorageManager.js';
+import AdminPanel     from './AdminPanel.jsx';
 import { googleSignOut } from './GoogleSignIn.jsx';
 import './css/App.css';
 import './css/theme.css';
@@ -64,8 +65,8 @@ function App() {
                             <div>
                                 <Header
                                     api={api}
-                                    user={renderUser}
-                                    onSignOut={onLogout}
+                                        user={renderUser}
+                                        onSignOut={onLogout}
                                 />
                                 {user ? <Presenter
                                             id={p.match.params.id}
@@ -76,6 +77,15 @@ function App() {
                             </div>
                         }
                     />
+                    <Route path="/admin">
+                        {error && <Redirect to="/" />}
+                        <Header
+                            api={api}
+                            user={renderUser}
+                            onSignOut={onLogout}
+                        />
+                        <AdminPanel api={api} />
+                    </Route>
                     <Route
                         path="/:id"
                         render={p => <Deck url={p.match.params.id} api={api} />}

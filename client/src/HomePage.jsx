@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import QuizList            from './QuizList.jsx';
 import Presenter           from './Presenter.jsx';
 import MarkdownTutorial    from './MarkdownTutorial.jsx';
-import './css/HomePage.css';
 
 function HomePage(props) {
     const [selectedQuiz, selectQuiz] = useState(undefined);

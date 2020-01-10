@@ -3,13 +3,13 @@
 module Endpoints.User (API, endpoints) where
 import Data.Aeson (ToJSON)
 import Data.ByteString (ByteString)
-import Database.Selda (ID, def)
+import Database.Selda (Text, ID, def)
 import GHC.Generics
 import Servant
 import Endpoints.Common
 import DB
 import AppMonad as M
-import Backend.User
+import qualified Backend.User as Backend
 import Token.Verify
 import Token.Issue
 import Token.Google (GoogleTokenInfo (sub, name, email))
@@ -22,12 +22,23 @@ data AuthResponse = AuthResponse
   } deriving (Show, Generic)
 instance ToJSON AuthResponse
 
-type Auth = "auth" :> ReqBody '[JSON] ByteString :> Post '[JSON] AuthResponse
+type Auth
+  =  "auth"
+  :> ReqBody '[JSON] ByteString
+  :> Post '[JSON] AuthResponse
+type FindUsers
+  =  "users"
+  :> Capture "search" Text
+  :> Capture "limit" Word
+  :> AuthHeader
+  :> Get '[JSON] [DB.User]
 
-type API = Auth
+type API = Auth :<|> FindUsers
 
 endpoints :: Env -> Server API
-endpoints = public auth
+endpoints
+  =   public auth
+  <|> authed findUsers
 
 auth :: ByteString -> AppM 'M.Anyone AuthResponse
 auth t = do
@@ -52,16 +63,21 @@ issueTokenFor u = do
   t <- issue key ti
   return (t, T.exp ti)
 
-
 getOrCreateUser :: GoogleTokenInfo -> AppM 'M.Anyone User
 getOrCreateUser token = do
-  muser <- runDB $ getUserByGoogleId (Token.Google.sub token)
+  muser <- runDB $ Backend.getUserByGoogleId (Token.Google.sub token)
   case muser of
     Just user -> return user
-    _         -> runDB $ createUser $ DB.User
+    _         -> runDB $ Backend.createUser $ DB.User
       { userId = def
       , googleId = Token.Google.sub token
       , userName = Token.Google.name token
       , userEmail = Token.Google.email token
       , isAdmin = False
       }
+
+findUsers :: Text -> Word -> AppM 'M.Admin [User]
+findUsers search lim = do
+  liftIO $ print search
+  liftIO $ print lim
+  runDB $ Backend.findUsers search lim

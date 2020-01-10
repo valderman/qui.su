@@ -8,7 +8,7 @@ class RestApi {
     constructor(baseUrl, storageManager, onExpire) {
         this.baseUrl = baseUrl || "";
         this.storageManager = storageManager;
-        this.onExpire = onExpire || (() => undefined);
+        this.onExpire = (onExpire || (() => undefined)).bind(null);
     }
 
     url(parts) {
