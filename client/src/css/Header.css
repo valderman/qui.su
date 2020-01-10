@@ -12,6 +12,14 @@ menu.topMenu {
     border-right: 1px solid #c0c0c0;
 }
 
+menu.topMenu.hide {
+    transition: top 0.15s;
+    top: -2.5em;
+}
+menu.topMenu.hide:hover {
+    top: 0;
+}
+
 @media(min-width: 600px) {
     menu.topMenu {
         text-align: right;

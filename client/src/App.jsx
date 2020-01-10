@@ -66,15 +66,14 @@ function App() {
                                 {(error || !renderUser) && <Redirect to="/" />}
                                 <Header
                                     api={api}
-                                        user={renderUser}
-                                        onSignOut={onLogout}
+                                    user={renderUser}
+                                    onSignOut={onLogout}
+                                    hide={true}
                                 />
-                                {user ? <Presenter
-                                            id={p.match.params.id}
-                                               api={api}
+                                <Presenter
+                                    id={p.match.params.id}
+                                    api={api}
                                 />
-                                 : <Redirect to="/" />
-                                }
                             </div>
                         }
                     />

@@ -11,8 +11,9 @@ function Header(props) {
             }
         });
     };
+    const menuClass = props.hide ? "topMenu hide" : "topMenu";
     return (
-        <menu type="toolbar" className="topMenu">
+        <menu type="toolbar" className={menuClass}>
             <li>
                 <Link to="/">Home</Link>
             </li>
