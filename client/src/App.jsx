@@ -63,6 +63,7 @@ function App() {
                         path="/present/:id"
                         render={p =>
                             <div>
+                                {(error || !renderUser) && <Redirect to="/" />}
                                 <Header
                                     api={api}
                                         user={renderUser}
@@ -78,7 +79,7 @@ function App() {
                         }
                     />
                     <Route path="/admin">
-                        {error && <Redirect to="/" />}
+                        {(error || !renderUser) && <Redirect to="/" />}
                         <Header
                             api={api}
                             user={renderUser}
