@@ -30,8 +30,7 @@ class Presenter extends React.Component {
             qids = await p;
         }
         const url = await this.api.getQuizUrl(this.state.id);
-        const answers = q.alts.reduce((n, alt) => n+alt.responses, 0);
-        this.setState({qids: qids, url: url, answers: answers}, () => {
+        this.setState({qids: qids, url: url}, () => {
             this.updateQuestion(q);
         });
         document.addEventListener('keyup', this.keyPress);
@@ -62,6 +61,9 @@ class Presenter extends React.Component {
         state.stats = q.stats;
         state.text = q.text || 'Your quiz is all set up and good to go!';
         state.done = q.done;
+        state.answers = q.done
+            ? 0
+            : q.alts.reduce((n, alt) => n+alt.responses, 0);
         this.setState(state);
     }
 
