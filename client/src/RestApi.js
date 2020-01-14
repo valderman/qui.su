@@ -18,8 +18,8 @@ class RestApi {
     setAuthHeader(init) {
         const [token, ttl] = this.storageManager.readWithLifetime('restApiAuthToken');
         if(ttl <= 0) {
-            this.onExpire();
-            throw '403';
+            this.storageManager.remove('restApiAuthToken');
+            return init;
         }
         if(token) {
             if(!init) {
