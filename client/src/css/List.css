@@ -21,17 +21,17 @@
     text-align: left;
     margin: 0;
     padding: 0.5em;
-    padding-left: 1em;
+    padding-left: 1.5em;
 }
 
 .itemList li {
     display: grid;
     grid-template-columns: auto max-content;
     border-radius: 0.5em;
-    padding-left: 2em;
+    padding-left: 1em;
 }
 
-.itemList li  button {
+.itemList li button {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
