@@ -9,6 +9,19 @@
     font-size: 24pt;
 }
 
+.question .overhead pre code {
+    font-size: 0.75em !important;
+}
+
+@media(max-width: 599px) {
+    .question pre code {
+        font-size: 0.4em !important;
+    }
+    .question > div {
+        padding: 0.35em;
+    }
+}
+
 .question div.overhead, .question .overhead div {
     font-size: 24pt;
     margin-bottom: 2em;

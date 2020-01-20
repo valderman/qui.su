@@ -47,6 +47,9 @@
     .deck .question .overhead {
         margin-bottom: 0 !important;
     }
+    .deck {
+        padding: 0.5em;
+    }
 }
 
 .deck .question {
