@@ -21,8 +21,9 @@
 .fileUpload label {
     border: 1px dashed maroon;
     border-radius: 1em;
-    font-size: 16pt;
+    font-size: 14pt;
     cursor: pointer;
     display: block;
-    padding: 1em;
+    padding: 0;
+    margin-bottom: 0.5em;
 }

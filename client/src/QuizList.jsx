@@ -65,14 +65,14 @@ function QuizList(props) {
 
     return (
         <div className="quizList">
+            <Uploader
+                api={props.api}
+                onUpload={fetchQuizzes}
+            />
             <List
                 onSelect={onSelect}
                 buttons={buttons}
                 items={quizzes}
-            />
-            <Uploader
-                api={props.api}
-                onUpload={fetchQuizzes}
             />
         </div>
     );
