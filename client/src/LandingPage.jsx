@@ -5,7 +5,7 @@ import './css/LandingPage.css';
 
 function LandingPage(props) {
     return (
-        <div className="landingPage">
+        <main className="landingPage">
             <h1>This is a quiz site!</h1>
             <p>
                 If you're a teacher looking to make your lectures more
@@ -22,7 +22,7 @@ function LandingPage(props) {
                 />
             </p>
             {props.error && <p className="error">{props.error}</p>}
-        </div>
+        </main>
     );
 }
 
