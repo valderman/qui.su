@@ -37,6 +37,7 @@ menu.topMenu li {
 }
 @media(max-width: 599px) {
     menu.topMenu {
+        z-index: 1000;
         margin-right: 0;
         text-align: center;
         position: fixed;

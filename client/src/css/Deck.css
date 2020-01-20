@@ -14,6 +14,7 @@
 
 .deckContainer:not(.preview) {
     position: fixed;
+    overflow: auto;
     height: 100%;
 }
 
@@ -27,8 +28,8 @@
     .answer .preview, .answer .overhead {
         display: none;
     }
-    .participationLink {
-        display: none;
+    .participationLink, .participationLink a {
+        font-size: 10pt !important;
     }
     .deck button {
         padding: 0.5em;

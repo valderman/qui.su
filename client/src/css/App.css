@@ -15,7 +15,7 @@
 }
 @media (max-width: 999px) {
     .App { width: 95%; }
-    main { margin-top: 3em; }
+    main, #presenter { margin-top: 3em; }
 }
 
 
