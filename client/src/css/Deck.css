@@ -24,7 +24,7 @@
     }
 }
 @media(max-width: 1199px) {
-    .answer {
+    .answer .preview, .answer .overhead {
         display: none;
     }
     .participationLink {
