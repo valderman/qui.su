@@ -13,7 +13,17 @@ menu.topMenu {
     border-right: 1px solid #c0c0c0;
 }
 
+menu.topMenu li {
+    display: inline-block;
+}
+
 @media(min-width: 600px) {
+    menu.topMenu {
+        text-align: right;
+    }
+    menu.topMenu li:last-child {
+        padding-right: 1em;
+    }
     menu.topMenu.hide {
         transition: top 0.15s;
         top: -2.5em;
@@ -21,47 +31,20 @@ menu.topMenu {
     menu.topMenu.hide:hover {
         top: 0;
     }
-
-    menu.topMenu {
-        text-align: right;
-    }
-    menu.topMenu li {
-        display: inline-block;
-    }
-    menu.topMenu li:last-child {
-        padding-right: 1em;
+    menu.topMenu .menuicon {
+        display: none;
     }
 }
 @media(max-width: 599px) {
-    menu.topMenu:hover {
-        transition: top 0.15s, max-height 0.3s;
-        max-height: 12em;
-        top: 0;
-    }
     menu.topMenu {
+        text-align: center;
         position: fixed;
-        z-index: 1000;
-        border-left: 0;
-        border-right: 0;
         border-radius: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        max-height: 3em;
-        top: -9em;
+        box-shadow: 0 2px 10px #c0c0c0;
         transition: top 0.15s, max-height 0.3s;
     }
-    menu.topMenu::after {
-        position: fixed;
-        top: 0;
-        padding-left: 1em;
-        padding-top: 0.5em;
-        background-color: white;
-        width: 100%;
-        content: url(/hamburger.png);
-    }
-    menu.topMenu:hover::after {
-        position: relative;
+    menu.topMenu a, menu.topMenu button {
+        font-size: 12pt !important;
     }
 }
 
