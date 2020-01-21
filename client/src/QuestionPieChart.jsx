@@ -30,6 +30,18 @@ function fromAlt(alt, ix) {
     };
 }
 
+function mergeZeroes(alts) {
+    const nonZeroes = alts.filter(a => a.responses > 0);
+    if(alts.length - nonZeroes.length < 2) {
+        return alts; // Only merge zeroes if there's more than one
+    }
+    const zeroAlt = {
+        text: "Other",
+        responses: 0
+    };
+    return nonZeroes.concat(zeroAlt);
+}
+
 function QuestionPieChart(props) {
     if(props.alts.every(a => a.responses === 0)) {
         return (<h2>Nobody responded to this question yet. :(</h2>);
@@ -41,7 +53,7 @@ function QuestionPieChart(props) {
                 </h2>
                 <PieChart
                     className="pieChart"
-                    data={props.alts.map(fromAlt)}
+                    data={mergeZeroes(props.alts).map(fromAlt)}
                     label={p => {
                             const title = p.data[p.dataIndex].title;
                             const perc = Math.round(p.data[p.dataIndex].percentage);
