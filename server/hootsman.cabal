@@ -25,6 +25,8 @@ library
       DB
       DB.Alternative
       DB.Common
+      DB.Migrations
+      DB.Migrations.AddRawQuizText
       DB.Quiz
       DB.Question
       DB.User

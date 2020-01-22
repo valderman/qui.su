@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import QuizEditor from './QuizEditor.jsx';
 import './css/MarkdownTutorial.css';
-import hljs from 'highlight.js';
 
 const initialQuiz = `My example quiz
 ================
@@ -23,22 +23,11 @@ Can you use raw HTML in quizzes?
 2. No (correct)`;
 
 function MarkdownTutorial(props) {
-    const [editing, edit] = useState(false);
-    const [quiz, setQuiz] = useState(initialQuiz);
-    const importQuiz = async () => {
-        const q = document.querySelector('#markdownTutorial #quizBox');
-        await props.api.newQuiz(q.innerText || q.value);
+    const importQuiz = async quiz => {
+        await props.api.newQuiz(quiz);
         (props.onAddQuiz || (() => undefined))();
     };
-    useEffect(() => {
-        const block = document.querySelector('#markdownTutorial pre code');
-        if(block) {
-            hljs.highlightBlock(block);
-        }
-        if(editing) {
-            document.querySelector('#quizBox').focus();
-        }
-    });
+
     return (
         <div id="markdownTutorial">
             <h3>How do I make a quiz?</h3>
@@ -46,27 +35,15 @@ function MarkdownTutorial(props) {
             As for how you make a quiz file, learning by example is probably
             the easiest way to get started.
             <h4>An example quiz</h4>
-            {editing
-                ? <textarea
-                      id="quizBox"
-                      value={quiz}
-                      onChange={e => setQuiz(e.target.value)}
-                      rows={quiz.split('\n').length}
-                  />
-                : <pre>
-                    <code
-                          id="quizBox"
-                          className="language-markdown"
-                      >
-                          {quiz}
-                      </code>
-                </pre>
-            }
-            <button onClick={importQuiz}>Add this quiz to my library</button>
-            {editing
-            ? <button onClick={() => edit(false)}>Stop editing</button>
-            : <button onClick={() => edit(true)}>Edit this quiz</button>
-            }
+            <QuizEditor
+                lockable={true}
+                editing={false}
+                initialValue={initialQuiz}
+                focus={true}
+                api={props.api}
+                onSave={importQuiz}
+                saveText="Add this quiz to my library"
+            />
 
             <h4>What did I just read?</h4>
             <p>

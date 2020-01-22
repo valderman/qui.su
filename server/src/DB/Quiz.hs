@@ -13,6 +13,7 @@ data Quiz = Quiz
   , quizUrl      :: Text
   , nextQuestion :: Maybe (ID Question)
   , showingStats :: Bool
+  , rawQuizText  :: Text
   } deriving Generic
 instance SqlRow Quiz
 instance FromJSON Quiz

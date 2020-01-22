@@ -78,6 +78,10 @@ class QuizApi extends RestApi {
         return await this.post(["quiz"], quiz, 'application/octet-stream');
     }
 
+    async overwriteQuiz(qid, quiz) {
+        return await this.post(["quiz", qid], quiz, 'application/octet-stream');
+    }
+
     async getQuizzes() {
         return (await this.get(["quizzes"]));
     }

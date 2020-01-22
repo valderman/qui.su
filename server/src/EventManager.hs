@@ -17,7 +17,7 @@ data Event
   = NextQuestion Question [Alt]
   | ShowStats Question [Alt]
   | QuizDone
-  | AnswerReceived (ID Alt)
+  | AnswerReceived Int
 
 type NotifierMap = M.IntMap (Notifier.Notifier Event)
 
@@ -35,9 +35,9 @@ await m qid = do
   Notifier.await notifier
 
 addNotifierIfMissing :: ID Quiz -> NotifierMap -> (NotifierMap, NotifierMap)
-addNotifierIfMissing qid m = unsafePerformIO $ do
+addNotifierIfMissing qid m = unsafePerformIO $
   case M.lookup (fromId qid) m of
-    Just notifier -> do
+    Just notifier ->
       pure (m, m)
     _             -> do
       n <- Notifier.new

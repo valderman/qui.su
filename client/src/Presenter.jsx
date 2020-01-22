@@ -12,14 +12,15 @@ class Presenter extends React.Component {
             qids: [],
             stats: false,
             id: props.id,
-            answers: 0
+            answers: 0,
+            tick: props.tick
         };
         this.api = props.api;
         this.preview = props.preview || false;
         this.keyPress = this.keyPress.bind(this);
     }
 
-    async componentDidMount() {
+    async refetchQuiz() {
         const p = this.api.getQuestionIds(this.state.id);
         let q, qids;
         if(this.preview) {
@@ -33,17 +34,27 @@ class Presenter extends React.Component {
         this.setState({qids: qids, url: url}, () => {
             this.updateQuestion(q);
         });
-        document.addEventListener('keyup', this.keyPress);
         this.countAnswers(this.state.id);
+    }
+
+    async componentDidMount() {
+        await this.refetchQuiz();
+        document.addEventListener('keyup', this.keyPress);
     }
 
     componentWillUnmount() {
         document.removeEventListener('keyup', this.keyPress);
     }
 
+    async componentDidUpdate() {
+        if(this.state.tick != this.props.tick) {
+            this.setState({tick: this.props.tick}, () => this.refetchQuiz());
+        }
+    }
+
     async countAnswers(qid) {
-        await this.api.waitForAnswer(qid);
-        this.setState({answers: this.state.answers+1});
+        const num_answers = await this.api.waitForAnswer(qid);
+        this.setState({answers: num_answers});
         await this.countAnswers(qid);
     }
 

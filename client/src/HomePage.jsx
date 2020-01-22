@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import QuizList            from './QuizList.jsx';
 import Presenter           from './Presenter.jsx';
 import MarkdownTutorial    from './MarkdownTutorial.jsx';
+import QuizEditor from './QuizEditor.jsx';
 
 function HomePage(props) {
     const [selectedQuiz, selectQuiz] = useState(undefined);
@@ -36,13 +37,24 @@ function HomePage(props) {
                     }
                     {selectedQuiz &&
                         <div>
-                            <h3>Quiz preview: {selectedQuiz.name}</h3>
+                            <h3>Preview</h3>
                             <Presenter
                                api={props.api}
                                preview={true}
                                id={selectedQuiz.quizId}
                                key={selectedQuiz.quizId}
-                           />
+                               tick={tick}
+                            />
+                            <h3>Edit quiz</h3>
+                            <QuizEditor
+                                editing={true}
+                                initialValue={selectedQuiz.rawQuizText}
+                                api={props.api}
+                                onSave={async q => {
+                                    await props.api.overwriteQuiz(selectedQuiz.quizId, q);
+                                    setTick(tick+1);
+                                }}
+                            />
                        </div>
                     }
                 </div>

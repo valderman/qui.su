@@ -85,5 +85,5 @@ getQuizUrlById = runDB . Backend.getQuizUrlById
 
 answer :: ID DB.Quiz -> ID DB.Alt -> AppM 'Anyone ()
 answer qid ans = do
-  runDB $ Backend.answerQuestion qid ans
-  raiseEvent qid (AnswerReceived ans)
+  answers <- runDB $ Backend.answerQuestion qid ans
+  raiseEvent qid (AnswerReceived answers)

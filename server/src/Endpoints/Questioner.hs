@@ -36,6 +36,18 @@ type NewQuiz
   :> ReqBody '[OctetStream] BS.ByteString
   :> AuthHeader
   :> Post '[JSON] Quiz
+type OverwriteQuiz
+  =  "quiz"
+  :> Capture "quizid" (ID Quiz)
+  :> Header "Content-Type" Text
+  :> ReqBody '[OctetStream] BS.ByteString
+  :> AuthHeader
+  :> Post '[JSON] ()
+type QuizText
+  =  "raw"
+  :> Capture "quizid" (ID Quiz)
+  :> AuthHeader
+  :> Get '[JSON] Text
 type Quizzes
   =  "quizzes"
   :> AuthHeader
@@ -54,13 +66,15 @@ type AwaitAnswer
   =  "answers"
   :> Capture "quizid" (ID Quiz)
   :> AuthHeader
-  :> Get '[JSON] (ID Alt)
+  :> Get '[JSON] Int
 
 type API
   =    Notify
   :<|> QuizDone
   :<|> QuizQuestions
   :<|> NewQuiz
+  :<|> OverwriteQuiz
+  :<|> QuizText
   :<|> Quizzes
   :<|> DeleteQuiz
   :<|> ResetAnswers
@@ -72,6 +86,8 @@ endpoints
   <|> authed quizDone
   <|> authed quizQuestions
   <|> authed newQuiz
+  <|> authed overwriteQuiz
+  <|> authed getQuizText
   <|> authed getQuizzes
   <|> authed deleteQuiz
   <|> authed resetAnswers
@@ -80,12 +96,15 @@ endpoints
 quizQuestions :: ID Quiz -> AppM 'Anyone [ID Question]
 quizQuestions = runDB . Backend.getQuizQuestionIds
 
-awaitAnswer :: ID Quiz -> AppM 'M.User (ID Alt)
+getQuizText :: ID Quiz -> AppM 'Anyone Text
+getQuizText = runDB . Backend.getQuizText
+
+awaitAnswer :: ID Quiz -> AppM 'M.User Int
 awaitAnswer qid = do
   notification <- waitEvent qid
   case notification of
-    AnswerReceived aid -> return aid
-    _                  -> awaitAnswer qid
+    AnswerReceived answers -> return answers
+    _                      -> awaitAnswer qid
 
 notify :: ID Quiz -> ID Question -> Bool -> AppM 'M.User NextQuestion
 notify qzid qid stats = do
@@ -112,6 +131,16 @@ quizDone qid = do
   text <- runDB $ Backend.finishQuiz uid qid
   raiseEvent qid QuizDone
 
+overwriteQuiz :: ID Quiz -> Maybe Text -> BS.ByteString -> AppM 'M.User ()
+overwriteQuiz qid _typ file = do
+    Just uid <- fmap sub <$> getAuthToken
+    case quiz of
+      Just q -> runDB $ Backend.overwriteQuizFor uid qid q utf8File
+      _      -> throwError $ err415 { errBody = "unable to parse quiz" }
+  where
+    utf8File = decodeUtf8 file
+    quiz = parseQuiz utf8File
+
 newQuiz :: Maybe Text -> BS.ByteString -> AppM 'M.User Quiz
 newQuiz _typ file = do
     Just uid <- fmap sub <$> getAuthToken
@@ -121,11 +150,12 @@ newQuiz _typ file = do
         -- retry up to five times in case of URL collision
         -- TODO: do something more sensible here
         url <- genQuizUrl len
-        runDB $ Backend.createQuizFor uid url q
-      _ -> do
-        throwError $ err415 { errBody = "only markdown supported" }
+        runDB $ Backend.createQuizFor uid url q utf8File
+      _ ->
+        throwError $ err415 { errBody = "unable to parse quiz" }
   where
-    quiz = parseQuiz (decodeUtf8 file)
+    utf8File = decodeUtf8 file
+    quiz = parseQuiz utf8File
     retry n m = do
       result <- m
       case result of
