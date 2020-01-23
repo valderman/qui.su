@@ -1,5 +1,6 @@
-{-# LANGUAGE TypeOperators, DataKinds, OverloadedStrings, TypeApplications #-}
+{-# LANGUAGE TypeOperators, DataKinds, OverloadedStrings #-}
 module Endpoints.Questioner (API, endpoints) where
+import Control.Monad (unless)
 import qualified Data.ByteString as BS
 import Data.Text (Text, pack)
 import Data.Text.Encoding (decodeUtf8)
@@ -135,8 +136,11 @@ overwriteQuiz :: ID Quiz -> Maybe Text -> BS.ByteString -> AppM 'M.User ()
 overwriteQuiz qid _typ file = do
     Just uid <- fmap sub <$> getAuthToken
     case quiz of
-      Just q -> runDB $ Backend.overwriteQuizFor uid qid q utf8File
-      _      -> throwError $ err415 { errBody = "unable to parse quiz" }
+      Just q -> do
+        success <- runDB $ Backend.overwriteQuizFor uid qid q utf8File
+        unless success $ throwError $ err404 { errBody = "no such quiz for user" }
+      _ ->
+        throwError $ err415 { errBody = "unable to parse quiz" }
   where
     utf8File = decodeUtf8 file
     quiz = parseQuiz utf8File

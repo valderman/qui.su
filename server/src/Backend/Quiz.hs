@@ -100,11 +100,13 @@ unsafeInsertQuestion qid q n = do
   insert_ alts $ flip map (MQ.alts q) $ \a ->
     Alt def question_id 0 (MQ.alternative a) 0 (MQ.correct a)
 
-overwriteQuizFor :: ID User -> ID Quiz -> MQ.Quiz -> Text -> SeldaM s ()
+overwriteQuizFor :: ID User -> ID Quiz -> MQ.Quiz -> Text -> SeldaM s Bool
 overwriteQuizFor oid qid quiz quizText = transaction $ do
     when (null $ MQ.questions quiz) $
       fail "quiz needs at least one question"
-    qs <- query $ select quizzes `suchThat` \q -> q ! #ownerId .== literal oid
+    qs <- query $ select quizzes `suchThat` \q ->
+      q ! #ownerId .== literal oid .&&
+      q ! #quizId .== literal qid
     case qs of
       [q] -> do
         update quizzes (\r -> r ! #quizId .== literal qid) $ \r -> r `with`
@@ -115,8 +117,9 @@ overwriteQuizFor oid qid quiz quizText = transaction $ do
           ]
         unsafeDeleteQuestions qid
         zipWithM_ (unsafeInsertQuestion qid) (MQ.questions quiz) [0..]
+        return True
       _ ->
-        return ()
+        return False
   where
     insertQuestion qid q n = do
       question_id <- insertWithPK questions [Question qid def n (MQ.question q)]
