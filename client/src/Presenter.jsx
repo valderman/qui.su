@@ -34,16 +34,22 @@ class Presenter extends React.Component {
         this.setState({qids: qids, url: url}, () => {
             this.updateQuestion(q);
         });
-        this.countAnswers(this.state.id);
+        if(!this.preview) {
+            this.countAnswers(this.state.id);
+        }
     }
 
     async componentDidMount() {
         await this.refetchQuiz();
-        document.addEventListener('keyup', this.keyPress);
+        if(!this.preview) {
+            document.addEventListener('keyup', this.keyPress);
+        }
     }
 
     componentWillUnmount() {
-        document.removeEventListener('keyup', this.keyPress);
+        if(!this.preview) {
+            document.removeEventListener('keyup', this.keyPress);
+        }
     }
 
     async componentDidUpdate() {
