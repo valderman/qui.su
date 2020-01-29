@@ -1,9 +1,10 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving, TypeApplications #-}
 module Scheduler
   ( TimeUnit (..), Interval
   , seconds, every, schedule
   ) where
 import Control.Concurrent
+import Control.Exception (SomeException, try)
 import Data.Word
 
 newtype Interval = Interval { seconds :: Word }
@@ -34,4 +35,4 @@ sleep secs
 
 schedule :: Interval -> IO () -> IO ()
 schedule secs m = forkIO go >> return ()
-  where go = sleep secs >> m >> go
+  where go = sleep secs >> try @SomeException m >> go
