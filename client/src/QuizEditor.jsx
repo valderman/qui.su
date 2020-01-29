@@ -28,7 +28,7 @@ function QuizEditor(props) {
                 id="quizBox"
                 value={quiz}
                 onChange={e => setQuiz(e.target.value)}
-                rows={quiz.split('\n').length}
+                rows={Math.min(25, quiz.split('\n').length)}
             />
             : <pre>
                 <code
