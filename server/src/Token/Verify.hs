@@ -8,15 +8,14 @@ import Data.Aeson (FromJSON, decodeStrict)
 import qualified Data.ByteString as BS
 import Data.Maybe (isJust)
 import Data.Text
+import Data.Text.Encoding
 import Data.Time
 import Data.Time.Clock.POSIX
 import Jose.Jwa
 import Jose.Jwk
 import Jose.Jwt
 import Token.Types
-
-import Debug.Trace
-tr x = trace (show x) x
+import Logging
 
 verifyToken_ :: forall m. MonadIO m => Issuer -> [Key] -> BS.ByteString -> m Bool
 verifyToken_ issuer keys token = do
@@ -28,12 +27,16 @@ verifyToken issuer keys token = liftIO $ do
     result <- decode keys encoding token
     case result of
       Left _ -> do
+        Logging.log Debug "Unable to decode token" (Just $ decodeUtf8 token)
         return Nothing
       Right (Jws (hd, claims)) -> do
         now <- getCurrentTime
         if maybe False (verifyClaims issuer now) (decodeStrict claims)
-          then return (decodeStrict claims)
-          else return Nothing
+          then do
+            return (decodeStrict claims)
+          else do
+            Logging.log Debug "Unable to verify token claims" (Just $ decodeUtf8 token)
+            return Nothing
   where
     encoding =
       case issuer of

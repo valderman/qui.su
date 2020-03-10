@@ -14,6 +14,7 @@ import Environment as Env
 import Backend.Init (initDatabase)
 import Scheduler
 import Jobs.UpdateGoogleKeys
+import Logging
 
 data HTML
 instance Accept HTML where
@@ -49,6 +50,8 @@ app = serve (Proxy @API) . endpoints
 
 hootsMain :: IO ()
 hootsMain = do
+  putStrLn "Initializing logger..."
+  initLogger
   putStrLn "Getting fresh authentication keys from Google..."
   updateGoogleKeys "googlekeys.json"
   env <- Env.new
