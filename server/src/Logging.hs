@@ -3,6 +3,7 @@
 module Logging (Severity (..), initLogger, Logging.log, orLog) where
 import Control.Monad.Catch
 import Data.Text (pack)
+import Data.Time (getCurrentTime)
 import Database.Selda
 import Database.Selda.SQLite
 
@@ -27,7 +28,8 @@ logItems = table "logItems" [ #logItemId :- autoPrimary ]
 
 log :: MonadIO m => Severity -> Text -> Maybe Text -> m ()
 log sev title desc = liftIO $ withSQLite logFile $ do
-  insert_ logItems [LogItem def def sev title desc]
+  now <- liftIO getCurrentTime
+  insert_ logItems [LogItem def now sev title desc]
 
 -- | Perform the given action. If an exception is thrown,
 --   log it using the given severity and title, and rethrow it.

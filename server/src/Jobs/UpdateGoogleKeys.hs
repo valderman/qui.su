@@ -14,5 +14,8 @@ updateGoogleKeys outfile = do
   let req = "https://www.googleapis.com/oauth2/v3/certs"
   response <- httpLbs req mgr `orLog` (Error, "Failed to get Google keys")
   if statusIsSuccessful (responseStatus response)
-    then BS.writeFile outfile (responseBody response) `orLog` (Error, "Failed to get Google keys")
-    else Logging.log Error "Failed to get Google keys" (Just $ decodeUtf8 $ toStrict $ responseBody response)
+    then do
+      BS.writeFile outfile (responseBody response) `orLog` (Error, "Failed to get Google keys")
+      Logging.log Debug "Successfully updated Google keys" Nothing
+    else do
+      Logging.log Error "Failed to get Google keys" (Just $ decodeUtf8 $ toStrict $ responseBody response)

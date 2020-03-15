@@ -33,6 +33,7 @@ verifyToken issuer keys token = liftIO $ do
         now <- getCurrentTime
         if maybe False (verifyClaims issuer now) (decodeStrict claims)
           then do
+            Logging.log Debug "Token successfully verified" (Just $ decodeUtf8 token)
             return (decodeStrict claims)
           else do
             Logging.log Debug "Unable to verify token claims" (Just $ decodeUtf8 token)
