@@ -4,6 +4,15 @@ function getTimestamp() {
     return new Date().getTime()/1000;
 }
 
+class RestException {
+    constructor(result) {
+        this.status = result.status;
+    }
+}
+
+class SessionExpiredException {
+}
+
 class RestApi {
     constructor(baseUrl, storageManager, onExpire) {
         this.baseUrl = baseUrl || "";
@@ -36,12 +45,7 @@ class RestApi {
     async get(parts) {
         let init = this.setAuthHeader();
         const result = await window.fetch(this.url(parts), init);
-        if(result.status === 403) {
-            this.onExpire();
-            throw '403';
-        } else {
-            return await result.json();
-        }
+        return await this.checkResult(result);
     }
 
     async post(parts, body, contentType) {
@@ -54,11 +58,19 @@ class RestApi {
         };
         this.setAuthHeader(init);
         const result = await window.fetch(this.url(parts), init);
-        if(result.status === 403) {
+        return await this.checkResult(result);
+    }
+
+    async checkResult(result) {
+        switch(result.status) {
+        case 403:
+        case 401:
             this.onExpire();
-            throw '403';
-        } else {
+            throw new SessionExpiredException();
+        case 200:
             return await result.json();
+        default:
+            throw new RestException(result);
         }
     }
 
