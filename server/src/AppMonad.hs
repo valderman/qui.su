@@ -12,6 +12,8 @@ import Control.Monad.Fail
 import Control.Monad.IO.Class
 import Control.Monad.Reader
 import qualified Data.ByteString.Lazy as BS
+import qualified Data.ByteString as BSS
+import Data.Aeson (decodeStrict)
 import Data.Proxy
 import Data.String
 import Data.Text
@@ -28,6 +30,7 @@ import DB.Quiz (Quiz)
 import Backend.User (getUserById)
 import Token.Verify
 import Token.Hootsman
+import Token.Google (GoogleKeys (..))
 
 data Priv = Anyone | User | Admin
 
@@ -83,7 +86,11 @@ class Monad m => MonadEnv m where
 
 instance MonadEnv (ReaderT E.Env Handler) where
   getGoogleClientId = E.googleClientId <$> ask
-  getGoogleKeys = E.googleKeys <$> ask
+  getGoogleKeys = do
+    mkeys <- liftIO $ decodeStrict <$> BSS.readFile "googlekeys.json"
+    case mkeys of
+      Just (GoogleKeys keys) -> pure keys
+      _                      -> error "unable to read google keys"
   getTokenKey = E.tokenKey <$> ask
   getTokenExpiry = E.tokenExpiry <$> ask
   getAppId = E.appId <$> ask

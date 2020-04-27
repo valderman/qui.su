@@ -35,7 +35,6 @@ data Env = Env
   , tokenExpiry    :: NominalDiffTime
   , tokenKey       :: Key
   , googleClientId :: Text
-  , googleKeys     :: [Key]
   , appId          :: Text
   , urlLength      :: Int
   , staticFileDir  :: FilePath
@@ -81,14 +80,12 @@ new :: MonadIO m => m Env
 new = liftIO $ do
   nm <- NM.new
   key <- genKey
-  Just (GoogleKeys gkeys) <- decodeStrict <$> BS.readFile "googlekeys.json"
   port <- getPort
   staticDir <- getStaticDir
   return Env
     { eventManager = nm
     , databaseFile = "hootsman.sqlite"
     , googleClientId = "418225883139-3sec8j5pr44cqth5j1425clvoqomr2b0.apps.googleusercontent.com"
-    , googleKeys = gkeys
     , authToken = Nothing
     , tokenExpiry = 12*3600
     , tokenKey = key
