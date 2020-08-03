@@ -1,56 +1,39 @@
 FROM debian:stable AS build
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USER=hootsman
-ARG STACK_RESOLVER=lts-14.17
-
 
 # Install system deps
 RUN apt-get update && \
-    apt-get -y install npm wget libgmp-dev zlib1g-dev && \
-    apt-get clean
+    apt-get -y install npm wget libgmp-dev zlib1g-dev cabal-install ghc && \
+    apt-get clean && \
+    cabal update && \
+    cabal install cabal-install && \
+    apt-get -y --autoremove remove cabal-install
 
 
 # Set up users and directories
-RUN mkdir -p /stack /app/{client/src,client/public,server} && \
-    useradd $USER -d /app && \
-    chown -R $USER:$USER /stack /app
-USER ${USER}:${USER}
-
-
-# Set up stack
-WORKDIR /stack
-RUN wget https://github.com/commercialhaskell/stack/releases/download/v2.1.3/stack-2.1.3-linux-x86_64-static.tar.gz && \
-    tar -xzf stack-2.1.3-linux-x86_64-static.tar.gz && \
-    rm stack-2.1.3-linux-x86_64-static.tar.gz && \
-    mv stack-2.1.3-linux-x86_64-static/* ./ && \
-    rmdir stack-2.1.3-linux-x86_64-static
-RUN ./stack setup --resolver $STACK_RESOLVER && ./stack update
-
+RUN mkdir -p /app/{client/src,client/public,server}
 
 # Install npm deps
 WORKDIR /app
-COPY --chown=${USER}:${USER} ./client/package.json ./client/package-lock.json \
-     ./client/
+COPY ./client/package.json ./client/
 RUN cd ./client && npm install
 
 
-# Install stack deps
+# Build server
 WORKDIR /app
-COPY --chown=${USER}:${USER} ./server/stack.yaml ./server/hootsman.cabal \
-     ./server/
-RUN cd ./server && /stack/stack install --only-dependencies
+COPY ./server/hootsman.cabal ./server/
+COPY ./server/src            ./server/src
+COPY ./server/app            ./server/app
+COPY ./Makefile              ./
+RUN export PATH=$HOME/.cabal/bin:$PATH && \
+    cabal update && make -j server
 
-
-# Build and export the application
+# Build client
 WORKDIR /app
-COPY --chown=${USER}:${USER} ./server/src     ./server/src
-COPY --chown=${USER}:${USER} ./server/app     ./server/app
-RUN PATH=$PATH:/stack make -j server
-
-COPY --chown=${USER}:${USER} ./Makefile       ./
-COPY --chown=${USER}:${USER} ./client/src     ./client/src
-COPY --chown=${USER}:${USER} ./client/public  ./client/public
-RUN PATH=$PATH:/stack make -j
+COPY ./client/src     ./client/src
+COPY ./client/public  ./client/public
+RUN make -j client
 
 VOLUME /app
 
@@ -67,6 +50,7 @@ RUN mkdir -p /data/upload /app/static && \
     useradd $USER -d /data && \
     chown -R $USER:$USER /data
 COPY --from=build /app/_app /app
+RUN chown -R ${USER}:${USER} /app
 
 USER ${USER}:${USER}
 WORKDIR /data

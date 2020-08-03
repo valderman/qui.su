@@ -68,8 +68,8 @@ library
       random          >=1.1  && <1.2,
       selda           >=0.5  && <0.6,
       selda-sqlite,
-      servant         >=0.16 && <0.17,
-      servant-server  >=0.16 && <0.17,
+      servant         >=0.16 && <0.19,
+      servant-server  >=0.16 && <0.19,
       warp            >=3.2  && <3.3,
       text            >=1.2  && <1.4,
       time            >=1.8  && <1.10

@@ -19,16 +19,21 @@ docker-run: docker
 	docker-compose up
 
 client: $(BUILDDIR)
+	cd client && npm install
 	cd client && npm run build
 	cp -rf client/build $(BUILDDIR)/static
 
 server: $(BUILDDIR)
-	cd server && stack install --local-bin-path ../$(BUILDDIR)
+	cd server && \
+	cabal v2-install \
+		--install-method=copy \
+		--overwrite-policy=always \
+		--installdir ../$(BUILDDIR)
 
 clean:
 	rm -r $(BUILDDIR)
 	rm -r client/build
-	cd server && stack clean
+	cd server && cabal v2-clean
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)

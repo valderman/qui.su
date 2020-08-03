@@ -6,3 +6,5 @@ client/node_modules
 client/build
 *.sqlite
 googlekeys.json
+googlesecret.json
+dist-newstyle/
